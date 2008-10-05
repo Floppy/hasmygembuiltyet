@@ -1,0 +1,2 @@
+page[:'gemspec-status'].replace :partial => 'check_gemspec'
+

@@ -1,0 +1,7 @@
+if @built
+  page << 'poller.stop()'
+  page[:'gem-status'].replace_html :partial => 'status_complete'
+  page.alert("Your gem has been built!")
+else
+  page[:'gem-status'].replace_html :partial => 'status_incomplete'
+end

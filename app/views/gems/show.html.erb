@@ -1,0 +1,7 @@
+<h2><%=h @user %>/<%=h @project %></h2>
+<p id="gemspec-status">
+  Fetching gemspec... <%= image_tag 'ajax-loader.gif' %>
+  <% javascript_tag do -%>
+    new Ajax.Request("<%= url_for :controller => 'gems', :action => 'check_gemspec', :user => @user, :project => @project %>", { method:'get'});
+  <% end -%>
+</p>

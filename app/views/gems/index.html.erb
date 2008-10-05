@@ -1,0 +1,25 @@
+<p>
+  Bored of running "sudo gem update" at random intervals to find out if
+  <%= link_to 'GitHub', 'http://github.com' %> has got round to building your
+  gem yet?
+</p><p>
+  Well, no more. Put in the details, and we'll keep checking for you
+  and pop up a message box when it's done. Tasty.
+</p>
+<p>
+<% form_tag do %>
+  <table>
+    <tr>
+      <td>GitHub User:</td>
+      <td><%= text_field :gem, :user %></td>
+    </tr>
+    <tr>
+      <td>Repository:</td>
+      <td><%= text_field :gem, :project %></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><%= submit_tag 'Has My Gem Built Yet?'%></td>
+    </tr>
+  </table>
+<% end %>

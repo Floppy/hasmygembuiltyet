@@ -1,5 +1,4 @@
 require 'rubygems/specification'
-require 'open-uri'
 require 'net/http'
 
 class GemsController < ApplicationController
@@ -17,14 +16,23 @@ class GemsController < ApplicationController
 
   def check_gemspec
     # Get gemspec from github
-    gemspec_url = "http://github.com/#{@user}/#{@project}/tree/master/#{@project}.gemspec?raw=true"
-    gemspec_file = open(gemspec_url).read
-    # Load gemspec
-    @gemspec = nil
-    Thread.new { @gemspec = eval("$SAFE = 3\n#{gemspec_file}") }.join
-    # Store spec in session
-    session[:gemspec] ||= {}
-    session[:gemspec]["#{@user}/#{@project}"] = @gemspec
+    gemspec_path = "/#{@user}/#{@project}/tree/master/#{@project}.gemspec?raw=true"
+    Net::HTTP.start('github.com') {|http|
+      req = Net::HTTP::Get.new(gemspec_path)
+      response = http.request(req)
+    }
+    if response.code == "200"
+      @gemspec_file = response.body
+      # Load gemspec
+      @gemspec = nil
+      Thread.new { @gemspec = eval("$SAFE = 3\n#{gemspec_file}") }.join
+      # Store spec in session
+      session[:gemspec] ||= {}
+      session[:gemspec]["#{@user}/#{@project}"] = @gemspec
+    end
+  rescue
+    nil
+  ensure
     # Respond
     respond_to do |format|
       format.js

@@ -1,2 +1,9 @@
-page[:'gemspec-status'].replace :partial => 'check_gemspec'
-
+if @gemspec_file
+  if @gemspec
+    page[:'gemspec-status'].replace :partial => 'check_gemspec_success'    
+  else
+    page[:'gemspec-status'].replace :partial => 'check_gemspec_error'
+  end
+else
+  page[:'gemspec-status'].replace :partial => 'check_gemspec_not_found'
+end

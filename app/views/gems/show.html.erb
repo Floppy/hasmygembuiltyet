@@ -5,3 +5,6 @@
     new Ajax.Request("<%= url_for :controller => 'gems', :action => 'check_gemspec', :user => @user, :project => @project %>", { method:'get'});
   <% end -%>
 </p>
+<p>
+  <%= link_to 'Check another gem', root_url %>
+</p>

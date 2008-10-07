@@ -31,6 +31,8 @@ class GemsController < ApplicationController
       session[:gemspec] ||= {}
       session[:gemspec]["#{@user}/#{@project}"] = @gemspec
     end
+  rescue SyntaxError
+    @syntax_error = true
   rescue
     nil
   ensure

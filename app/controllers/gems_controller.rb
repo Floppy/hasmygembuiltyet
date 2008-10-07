@@ -17,15 +17,16 @@ class GemsController < ApplicationController
   def check_gemspec
     # Get gemspec from github
     gemspec_path = "/#{@user}/#{@project}/tree/master/#{@project}.gemspec?raw=true"
+    res = nil
     Net::HTTP.start('github.com') {|http|
       req = Net::HTTP::Get.new(gemspec_path)
-      response = http.request(req)
+      res = http.request(req)
     }
-    if response.code == "200"
-      @gemspec_file = response.body
+    if res.code == "200"
+      @gemspec_file = res.body
       # Load gemspec
       @gemspec = nil
-      Thread.new { @gemspec = eval("$SAFE = 3\n#{gemspec_file}") }.join
+      Thread.new { @gemspec = eval("$SAFE = 3\n#{@gemspec_file}") }.join
       # Store spec in session
       session[:gemspec] ||= {}
       session[:gemspec]["#{@user}/#{@project}"] = @gemspec

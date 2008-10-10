@@ -16,7 +16,7 @@ begin
 rescue SyntaxError
   #Output in YAML format, then?
   require 'yaml'
-  Thread.new { spec = YAML.load(data) }.join
+  spec = YAML.load(data)
 end
 puts spec
 puts "OK"

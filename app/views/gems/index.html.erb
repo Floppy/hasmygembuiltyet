@@ -6,16 +6,31 @@
   Well, no more. Put in the details, and we'll keep checking for you
   and pop up a message box when it's done. Tasty.
 </p>
-<p>
+
 <% form_tag do %>
   <table>
     <tr>
-      <td>GitHub User:</td>
+      <td style="width:6em">GitHub User:</td>
       <td><%= text_field :gem, :user %></td>
     </tr>
     <tr>
       <td>Repository:</td>
       <td><%= text_field :gem, :project %></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><%= submit_tag 'Has My Gem Built Yet?'%></td>
+    </tr>
+  </table>
+<% end %>
+
+<p>Or paste a GitHub URL containing the user and repository:</p>
+
+<% form_tag do %>
+  <table>    
+    <tr>
+      <td style="width:6em">GitHub URL:</td>
+      <td><%= text_field :gem, :url %></td>
     </tr>
     <tr>
       <td></td>

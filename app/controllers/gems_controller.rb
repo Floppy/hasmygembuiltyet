@@ -7,6 +7,7 @@ class GemsController < ApplicationController
 
   def index
     if request.post?
+      extract_details_from_url
       redirect_to :action => 'show', :user => params[:gem][:user], :project => params[:gem][:project]
     end
   end
@@ -65,6 +66,13 @@ class GemsController < ApplicationController
   def get_gem_details
     @user = params[:user]
     @project = params[:project]
+  end
+  
+  def extract_details_from_url
+    if params[:gem][:url].to_s.match(%r{github\.com/([^/]+)/([^/]+)})
+      params[:gem][:user] = $1
+      params[:gem][:project] = $2
+    end
   end
 
 end

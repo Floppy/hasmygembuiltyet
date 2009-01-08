@@ -2,7 +2,6 @@ require 'rubygems/specification'
 require 'net/http'
 
 class GemsController < ApplicationController
-
   before_filter :get_gem_details, :except => :index
 
   def index
@@ -42,19 +41,21 @@ class GemsController < ApplicationController
       format.js
     end
   end
+  
+  def check_gem_in_remote_specfile
+    @gemspec = session[:gemspec]["#{@user}/#{@project}"]
+  end
 
   def status
     # Get spec from session
     @gemspec = session[:gemspec]["#{@user}/#{@project}"]
     # Work out gem URL
-    @gem_path = "/gems/#{@user}-#{@gemspec.name}-#{@gemspec.version}.gem"
-    @gem_url = "http://gems.github.com#{@gem_path}"
-    # See if target of URL exists
-    Net::HTTP.start('gems.github.com') {|http|
-      req = Net::HTTP::Head.new(@gem_path)
-      response = http.request(req)
-      @built = (response.code == "200")
-    }
+    @gem_url = "http://gems.github.com#{gem_path}"
+    
+    @built = gem_is_built?
+    
+    @in_spec_file = @built && gem_is_in_specfile?
+    
     # Respond
     respond_to do |format|
       format.js
@@ -68,6 +69,14 @@ class GemsController < ApplicationController
     @project = params[:project]
   end
   
+  def gem_name
+    "#{@user}-#{@gemspec.name}"
+  end
+  
+  def gem_path
+    "/gems/#{gem_name}-#{@gemspec.version}.gem"
+  end
+  
   def extract_details_from_url
     if params[:gem][:url].to_s.match(%r{github\.com/([^/]+)/([^/]+)})
       params[:gem][:user] = $1
@@ -75,4 +84,22 @@ class GemsController < ApplicationController
     end
   end
 
+  def gem_is_built?
+    session[:gemspec_status] ||= {}
+    session[:gemspec_status]["#{@user}/#{@project}/#{@gemspec.version}"] ||= gem_available_on_server?
+  end
+  
+  def gem_available_on_server?
+    Net::HTTP.start('gems.github.com') {|http|
+      req = Net::HTTP::Head.new(gem_path)
+      response = http.request(req)
+      return response.code == "200"
+    }
+  end
+  
+  def gem_is_in_specfile?
+    fetcher = Gem::SpecFetcher.new
+    specs = fetcher.load_specs(URI.parse('http://gems.github.com/'), 'specs')
+    specs.any?{|(name, spec)| name == gem_name and spec.version.to_s == @gemspec.version.to_s }
+  end
 end

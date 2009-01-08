@@ -1,6 +1,9 @@
 if @gemspec_file
   if @gemspec
-    page[:'gemspec-status'].replace :partial => 'check_gemspec_success'    
+    page[:'fetch_complete'].replace_html image_tag('small-tick.png')
+    page[:'build_complete'].replace_html image_tag('ajax-loader.gif')
+    page[:'fetch_complete_detail'].replace_html :partial => "check_gemspec_success"    
+    page << "new Ajax.Request(\"#{url_for :controller => 'gems', :action => 'status', :user => @user, :project => @project}\", { method:'get'});"
   else
     page[:'gemspec-status'].replace :partial => 'check_gemspec_error'
   end

@@ -1,7 +1,19 @@
+poll_frequency = 15
 if @built
-  page << 'poller.stop()'
-  page[:'gem-status'].replace_html :partial => 'status_complete'
-  page.alert("Your gem has been built!")
-else
-  page[:'gem-status'].replace_html :partial => 'status_incomplete'
+  page[:'build_complete'].replace_html image_tag('small-tick.png')
+  page[:'publish_complete'].replace_html image_tag('ajax-loader.gif')
+  page[:'build_complete_detail'].replace_html link_to(@gem_url, @gem_url)
+  poll_frequency = 60
+end
+
+if @in_spec_file
+  page[:'publish_complete'].replace_html image_tag('small-tick.png')
+  page[:'publish_complete_detail'].replace_html :inline => "available via: <code>sudo gem install <%=h @user %>-<%=h @gemspec.name %></code>"
+  poll_frequency = 0
+  page << 'if(document.poller) document.poller.stop()'
+  page.alert("Your gem has been built, and is available!")
+end
+
+unless poll_frequency == 0
+  page << periodically_call_remote(:url => {:controller => 'gems', :action => 'status', :user => @user, :project => @project}, :frequency => poll_frequency, :method => :get)
 end

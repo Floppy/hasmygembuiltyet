@@ -1,10 +1,27 @@
 <h2><%=h @user %>/<%=h @project %></h2>
-<p id="gemspec-status">
-  Fetching gemspec... <%= image_tag 'ajax-loader.gif' %>
-  <% javascript_tag do -%>
-    new Ajax.Request("<%= url_for :controller => 'gems', :action => 'check_gemspec', :user => @user, :project => @project %>", { method:'get'});
-  <% end -%>
-</p>
+<div id="gemspec-status">
+  <table id="progress">
+    <tr>
+      <th>Fetch Gemspec:</th>
+      <td id="fetch_complete"><%= image_tag 'ajax-loader.gif' %></td>
+      <td id="fetch_complete_detail">&nbsp;</td>
+    </tr>
+    <tr>
+      <th>Build Complete:</th>
+      <td id="build_complete">&nbsp;</td>
+      <td id="build_complete_detail">&nbsp;</td>
+    </tr>
+    <tr>
+      <th>Await Publish:</th>
+      <td id="publish_complete">&nbsp;</td>
+      <td id="publish_complete_detail">&nbsp;</td>
+    </tr>
+  </table>
+</div>
 <p>
   <%= link_to 'Check another gem', root_url %>
 </p>
+
+<% javascript_tag do -%>
+  new Ajax.Request("<%= url_for :controller => 'gems', :action => 'check_gemspec', :user => @user, :project => @project %>", { method:'get'});
+<% end -%>

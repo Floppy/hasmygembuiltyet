@@ -16,7 +16,7 @@ class GemsController < ApplicationController
 
   def check_gemspec
     # Get gemspec from github
-    gemspec_path = "/#{@user}/#{@project}/blob/HEAD/#{@project}.gemspec?raw=true"
+    gemspec_path = "/#{@user}/#{@project}/raw/master/#{@project}.gemspec"
     res = nil
     Net::HTTP.start('github.com') {|http|
       req = Net::HTTP::Get.new(gemspec_path)
